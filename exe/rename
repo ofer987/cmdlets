@@ -1,0 +1,123 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'curses'
+require 'pry-byebug'
+
+class Terminal
+  WIDTH = 50
+
+  def terminal_message
+    message.join("\n")
+  end
+
+  def initialize
+    @message = []
+  end
+
+  def show_message(line)
+    height  = 5
+    width   = WIDTH
+    top     = 0
+    # top    = (Curses.lines - height) / 2
+    # left   = (Curses.cols - width) / 2
+    left    = 0
+    win = Curses::Window.new(height, width, top, left)
+    # win.setpos(2, 3)
+    self.message = [line]
+    win.addstr(message.join("\n"))
+    win.refresh
+    # win.getch
+    win.close
+  end
+
+  def add(line)
+    height  = 5
+    width   = WIDTH
+    top     = 0
+    left    = 0
+    win = Curses::Window.new(height, width, top, left)
+
+    message << line
+    win.addstr(message.join("\n"))
+    win.refresh
+    # win.getch
+    win.close
+  end
+
+  private
+
+  attr_reader :message
+end
+
+def delete_file(terminal, source)
+  first_line = "Delete source file #{source} (y/N): "
+
+  terminal.add(first_line)
+  result = Curses.getch.chomp
+
+  if result.downcase == 'y'
+    # File.delete(source)
+    second_line = 'File deleted'
+    terminal.add(second_line)
+  end
+
+  third_line = 'Press any key to exit'
+  terminal.add(third_line)
+
+  Curses.getch
+rescue StandardError => e
+  puts "error deleteing #{source}"
+  puts e
+
+  exit 1
+end
+
+def copy_file(terminal, source, destination)
+  line = "Copying #{source} to #{destination}"
+
+  terminal.add(line)
+
+  # contents = IO.read(source)
+  # IO.write(destination, contents)
+rescue StandardError => e
+  puts "error copying #{source} to #{destination}"
+  puts e
+
+  exit 1
+end
+
+source = ARGV[0].to_s
+destination = source
+
+Curses.init_screen
+Curses.crmode
+Curses.setpos(0, 0)
+Curses.addstr(source)
+
+terminal = Terminal.new
+
+begin
+  loop do
+    # win.refresh
+    # Curses.setpos((Curses.lines - 1) / 2, (Curses.cols - 11) / 2)
+    terminal.show_message(destination)
+
+    letter = Curses.getch
+    case letter.ord
+    when 127, 8
+      destination = destination[0..-2]
+    when 2, 6, 1
+      next
+    when 10
+      break
+    else
+      destination = "#{destination}#{letter}"
+    end
+  end
+
+  copy_file(terminal, source, destination)
+  delete_file(terminal, source)
+ensure
+  Curses.close_screen
+end
