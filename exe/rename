@@ -19,15 +19,12 @@ class Terminal
     height  = 5
     width   = WIDTH
     top     = 0
-    # top    = (Curses.lines - height) / 2
-    # left   = (Curses.cols - width) / 2
     left    = 0
     win = Curses::Window.new(height, width, top, left)
-    # win.setpos(2, 3)
     self.message = [line]
     win.addstr(message.join("\n"))
     win.refresh
-    # win.getch
+
     win.close
   end
 
@@ -41,7 +38,7 @@ class Terminal
     message << line
     win.addstr(message.join("\n"))
     win.refresh
-    # win.getch
+
     win.close
   end
 
@@ -57,6 +54,7 @@ def delete_file(terminal, source)
   result = Curses.getch.chomp
 
   if result.downcase == 'y'
+    # TODO: uncomment
     # File.delete(source)
     second_line = 'File deleted'
     terminal.add(second_line)
@@ -78,6 +76,7 @@ def copy_file(terminal, source, destination)
 
   terminal.add(line)
 
+  # TODO: uncomment
   # contents = IO.read(source)
   # IO.write(destination, contents)
 rescue StandardError => e
@@ -99,8 +98,6 @@ terminal = Terminal.new
 
 begin
   loop do
-    # win.refresh
-    # Curses.setpos((Curses.lines - 1) / 2, (Curses.cols - 11) / 2)
     terminal.show_message(destination)
 
     letter = Curses.getch
