@@ -81,8 +81,8 @@ def delete_file(terminal, source)
   end
 
   if result.downcase == 'y'
-    # TODO: uncomment
-    # File.delete(source)
+    File.delete(source)
+
     second_line = 'File deleted'
     terminal.add_line(second_line)
   end
@@ -99,12 +99,10 @@ end
 
 def copy_file(terminal, source, destination)
   line = "Copying #{source} to #{destination}"
-
   terminal.add_line(line)
 
-  # TODO: uncomment
-  # contents = IO.read(source)
-  # IO.write(destination, contents)
+  contents = IO.read(source)
+  IO.write(destination, contents)
 rescue StandardError
   puts "error copying #{source} to #{destination}"
 
