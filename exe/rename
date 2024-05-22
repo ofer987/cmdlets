@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require 'curses'
-require 'pry-byebug'
 
 class Terminal
   WIDTH = 50
@@ -16,57 +15,84 @@ class Terminal
   end
 
   def show_message(line)
-    height  = 5
-    width   = WIDTH
-    top     = 0
-    left    = 0
-    win = Curses::Window.new(height, width, top, left)
-    self.message = [line]
+    win = generate_window
+
+    @message = [line]
     win.addstr(message.join("\n"))
     win.refresh
-
+  ensure
     win.close
   end
 
-  def add(line)
-    height  = 5
-    width   = WIDTH
-    top     = 0
-    left    = 0
-    win = Curses::Window.new(height, width, top, left)
+  def add_char(char)
+    win = generate_window
+
+    message[-1] << char.to_s
+
+    win.addstr(message.join("\n"))
+    win.refresh
+  ensure
+    win.close
+  end
+
+  def add_line(line)
+    win = generate_window
 
     message << line
     win.addstr(message.join("\n"))
     win.refresh
-
+  ensure
     win.close
   end
 
   private
+
+  def generate_window
+    height  = 5
+    width   = WIDTH
+    top     = 0
+    left    = 0
+
+    Curses::Window.new(height, width, top, left)
+  end
 
   attr_reader :message
 end
 
 def delete_file(terminal, source)
   first_line = "Delete source file #{source} (y/N): "
+  terminal.add_line(first_line)
 
-  terminal.add(first_line)
-  result = Curses.getch.chomp
+  result = ''
+  loop do
+    char = Curses.get_char
+
+    case char.ord
+    when 10
+      break
+    else
+      # Use a string, because we want the user to press Enter.
+      # And then we examine the entire string whether it is equal to either
+      # 'Y' or 'y'.
+      # This is  a more intuitive experience
+      result += char
+      terminal.add_char(char)
+    end
+  end
 
   if result.downcase == 'y'
     # TODO: uncomment
     # File.delete(source)
     second_line = 'File deleted'
-    terminal.add(second_line)
+    terminal.add_line(second_line)
   end
 
   third_line = 'Press any key to exit'
-  terminal.add(third_line)
+  terminal.add_line(third_line)
 
   Curses.getch
-rescue StandardError => e
+rescue StandardError
   puts "error deleteing #{source}"
-  puts e
 
   exit 1
 end
@@ -74,14 +100,13 @@ end
 def copy_file(terminal, source, destination)
   line = "Copying #{source} to #{destination}"
 
-  terminal.add(line)
+  terminal.add_line(line)
 
   # TODO: uncomment
   # contents = IO.read(source)
   # IO.write(destination, contents)
-rescue StandardError => e
+rescue StandardError
   puts "error copying #{source} to #{destination}"
-  puts e
 
   exit 1
 end
