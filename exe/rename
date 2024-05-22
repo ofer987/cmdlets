@@ -59,6 +59,7 @@ class Terminal
   attr_reader :message
 end
 
+# rubocop:disable Metrics/MethodLength
 def delete_file(terminal, source)
   first_line = "Delete source file #{source} (y/N): "
   terminal.add_line(first_line)
@@ -96,6 +97,7 @@ rescue StandardError
 
   exit 1
 end
+# rubocop:enable Metrics/MethodLength
 
 def copy_file(terminal, source, destination)
   line = "Copying #{source} to #{destination}"
