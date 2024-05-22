@@ -101,8 +101,8 @@ def copy_file(terminal, source, destination)
   line = "Copying #{source} to #{destination}"
   terminal.add_line(line)
 
-  contents = IO.read(source)
-  IO.write(destination, contents)
+  contents = File.read(source)
+  File.write(destination, contents)
 rescue StandardError
   puts "error copying #{source} to #{destination}"
 

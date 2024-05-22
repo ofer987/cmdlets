@@ -8,8 +8,10 @@ Gem::Specification.new do |spec|
   spec.authors = ['Dan Jakob Ofer']
   spec.email = ['dan@ofer.to']
 
+  spec.summary = 'Useful CLI Tools'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.1.0'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
