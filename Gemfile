@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in cdmlets.gemspec
+# Specify your gem's dependencies in cmdlets.gemspec
 gemspec
 
 gem 'pry', '~> 0.14.2'

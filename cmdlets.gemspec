@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'lib/cdmlets/version'
+require_relative 'lib/cmdlets/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'cdmlets'
+  spec.name = 'cmdlets'
   spec.version = CmdLets::VERSION
   spec.authors = ['Dan Jakob Ofer']
   spec.email = ['dan@ofer.to']
